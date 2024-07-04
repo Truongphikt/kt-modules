@@ -1,7 +1,7 @@
 name: pull-module
 run-name: ${{ github.actor }} is pulling module
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       module_link:
         description: 'GitHub link of module'
