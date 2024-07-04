@@ -1,0 +1,15 @@
+name: pull-module
+run-name: ${{ github.actor }} is pulling module
+on:
+  workflow_call:
+    inputs:
+      module_link:
+        description: 'GitHub link of module'
+        default: 'git@github.com:KTest-VN/<module>.git'
+        required: true
+        type: string
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
