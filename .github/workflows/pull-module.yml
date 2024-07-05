@@ -49,13 +49,19 @@ jobs:
       
       - name: Clean the module
         run: |
-          rm -rf /modules/${{ env.MODULE_NAME }}/.git/
+          rm -rf ./modules/${{ env.MODULE_NAME }}/.git/
+
+      - name: Get last commit of module
+        run: |
+          cd ./modules/${{ env.MODULE_NAME }}
+          LATEST_COMMIT=`git log -n 1 origin/main --pretty=format:"%H"`
+          echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
 
       - name: Commit changes
         run: |
           git reset
           git add .
-          git commit -m "${{ github.actor }} add module ${{ env.MODULE_NAME }}"
+          git commit -m "${{ github.actor }} add module ${{ env.MODULE_NAME }} from KTest-VN/${{ env.MODULE_NAME }}@${{ env.LATEST_COMMIT }}"
       
       - name: Push changes
         run: git push origin main
