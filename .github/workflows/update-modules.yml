@@ -1,0 +1,34 @@
+name: pull-module
+run-name: Update module
+
+on:
+  schedule:
+    - cron: '0 0 28-31 * *'
+  workflow_dispatch:
+
+
+jobs:
+  checkout_module:
+    runs-on: ubuntu-20.04
+
+  steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Add SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      
+      - name: Get list all module
+        run: echo "MODULE_LIST=`echo $list`" >> $GITHUB_ENV
+
+      - name: Fetch each module
+        env:
+          MODULE_LIST: ${{ env.MODULE_LIST }}
+        run: |
+        for module in `echo ${MODULE_LIST}`; do
+          echo "Hi ${module}"
+        done

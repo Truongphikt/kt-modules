@@ -20,7 +20,7 @@ on:
         - subworkflow
 
 jobs:
-  checkout_module:
+  pulling_module:
     runs-on: ubuntu-20.04
     
     steps:
