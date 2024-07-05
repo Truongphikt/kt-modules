@@ -1,4 +1,4 @@
-name: pull-module
+name: update-modules
 run-name: Update module
 
 on:
