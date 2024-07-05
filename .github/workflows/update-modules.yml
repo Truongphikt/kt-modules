@@ -8,10 +8,9 @@ on:
 
 
 jobs:
-  checkout_module:
-    runs-on: ubuntu-20.04
+  list_module:
 
-  steps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -23,12 +22,19 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
       
       - name: Get list all module
-        run: echo "MODULE_LIST=`echo $list`" >> $GITHUB_ENV
-
-      - name: Fetch each module
-        env:
-          MODULE_LIST: ${{ env.MODULE_LIST }}
         run: |
-        for module in `echo ${MODULE_LIST}`; do
-          echo "Hi ${module}"
-        done
+          json_list=$(echo `ls ./modules/ktest` | tr -d '\n' | jq -R -s -c 'split(" ")')
+          echo "MODULE_LIST=$json_list" >> $GITHUB_ENV
+
+  update_module:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        module_name: ${{ fromJson(env.MODULE_LIST) }}
+    steps:
+      - name: Update modules
+        uses: ./.github/workflows/pull-module.yml
+        with:
+          module_name: ${{ matrix.module_name }}
+          repo_type: module
+      

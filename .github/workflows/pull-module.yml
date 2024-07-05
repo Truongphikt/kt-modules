@@ -18,6 +18,18 @@ on:
         options:
         - module
         - subworkflow
+  
+  workflow_call:
+    inputs:
+      module_name: 
+        description: 'Module/Submodule name to pull'
+        required: true
+        type: string
+
+      repo_type:
+        description: 'Type of repo'
+        required: true
+        type: string
 
 jobs:
   pulling_module:
@@ -38,7 +50,18 @@ jobs:
         run: |
           echo "MODULE_LINK=git@github.com:KTest-VN/${{ github.event.inputs.module_name }}.git" >> $GITHUB_ENV
           echo "MODULE_NAME=${{ github.event.inputs.module_name }}" >> $GITHUB_ENV
-          
+
+      - name: Check whether the module is created.
+        run: |
+          if [ -d "./modules/ktest/${{ env.MODULE_NAME }}" ]; then
+            echo "MODULE_EXIS=1" >> $GITHUB_ENV
+          else
+            echo "MODULE_EXIS=0" >> $GITHUB_ENV
+          fi   
+      
+      - name: Clean module if exis
+        if: ${{ env.MODULE_EXIS }}
+        run: rm -rf ./modules/${{ env.MODULE_NAME }}
 
       - name: Clone the module
         run: |
@@ -47,7 +70,7 @@ jobs:
           git fetch
           git clone ${{ env.MODULE_LINK }} ./modules/${{ env.MODULE_NAME }}
       
-      - name: Clean the module
+      - name: Clean git of module
         run: |
           rm -rf ./modules/${{ env.MODULE_NAME }}/.git/
 
