@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Add SSH key
         run: |
@@ -72,7 +74,7 @@ jobs:
       - name: Checking ${{ env.REPO_TYPE }} if exist
         if: ${{ env.REPO_EXIST == 1 }} 
         run: |
-          REMAIN_COMMIT=`git log -n 1 --pretty=format:"%s" origin/main -- ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/main.nf | grep -oP '(?<=@).*' || echo 'null'`
+          REMAIN_COMMIT=`git log -n 1 --pretty=format:"%s" ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/main.nf | grep -oP '(?<=@).*' || echo 'null'`
           REMOTE_COMMIT=`git ls-remote ${{ env.REPO_LINK }}| head -n1 | awk '{print $1}' | grep -oE '^.{7}'`
           
           echo "REMAIN_COMMIT=$REMAIN_COMMIT"
