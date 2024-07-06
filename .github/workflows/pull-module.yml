@@ -83,7 +83,7 @@ jobs:
       - name: Commit changes
         run: |
           git reset
-          git add .
+          git add ./modules/ktest/${{ env.MODULE_NAME }}
           git commit -m "${{ github.actor }} add module ${{ env.MODULE_NAME }} from KTest-VN/${{ env.MODULE_NAME }}@${{ env.LATEST_COMMIT }}"
       
       - name: Push changes
