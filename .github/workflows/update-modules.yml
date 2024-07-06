@@ -1,4 +1,4 @@
-name: update-modules
+name: Update all modules
 run-name: Update module
 
 on:

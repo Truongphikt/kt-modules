@@ -1,10 +1,10 @@
-name: pull-module
+name: Pull module/submodule
 run-name: ${{ github.actor }} is pulling module
 
 on:
   workflow_dispatch:
     inputs:
-      module_name: 
+      repo_name: 
         description: 'Module/Submodule name to pull'
         default: 'imputation'
         required: true
@@ -21,7 +21,7 @@ on:
   
   workflow_call:
     inputs:
-      module_name: 
+      repo_name: 
         description: 'Module/Submodule name to pull'
         required: true
         type: string
@@ -48,43 +48,44 @@ jobs:
 
       - name: Prepare global variables
         run: |
-          echo "MODULE_LINK=git@github.com:KTest-VN/${{ github.event.inputs.module_name }}.git" >> $GITHUB_ENV
-          echo "MODULE_NAME=${{ github.event.inputs.module_name }}" >> $GITHUB_ENV
+          echo "REPO_LINK=git@github.com:KTest-VN/${{ github.event.inputs.repo_name }}.git" >> $GITHUB_ENV
+          echo "REPO_NAME=${{ github.event.inputs.repo_name }}" >> $GITHUB_ENV
+          echo "REPO_TYPE=${{ github.event.inputs.repo_type }}" >> $GITHUB_ENV
 
-      - name: Check whether the module is created.
+      - name: Check whether the ${{ env.REPO_TYPE }} is created.
         run: |
-          if [ -d "./modules/ktest/${{ env.MODULE_NAME }}" ]; then
-            echo "MODULE_EXIS=1" >> $GITHUB_ENV
+          if [ -d "./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}" ]; then
+            echo "REPO_EXIST=1" >> $GITHUB_ENV
           else
-            echo "MODULE_EXIS=0" >> $GITHUB_ENV
+            echo "REPO_EXIST=0" >> $GITHUB_ENV
           fi   
       
-      - name: Clean module if exis
-        if: ${{ env.MODULE_EXIS }}
-        run: rm -rf ./modules/ktest/${{ env.MODULE_NAME }}
+      - name: Clean ${{ env.REPO_TYPE }} if exis
+        if: ${{ env.REPO_EXIST }}
+        run: rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
 
-      - name: Clone the module
+      - name: Clone the ${{ env.REPO_TYPE }}
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git fetch
-          git clone ${{ env.MODULE_LINK }} ./modules/ktest/${{ env.MODULE_NAME }}
+          git clone ${{ env.REPO_LINK }} ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
       
-      - name: Get last commit of module
+      - name: Get last commit of ${{ env.REPO_TYPE }}
         run: |
-          cd ./modules/ktest/${{ env.MODULE_NAME }}
+          cd ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
           LATEST_COMMIT=`git log -n 1 origin/main --pretty=format:"%h"`
           echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
 
-      - name: Clean git of module
+      - name: Clean git of ${{ env.REPO_TYPE }}
         run: |
-          rm -rf ./modules/ktest/${{ env.MODULE_NAME }}/.git/
+          rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/.git/
 
       - name: Commit changes
         run: |
           git reset
-          git add ./modules/ktest/${{ env.MODULE_NAME }}
-          git commit -m "${{ github.actor }} add module ${{ env.MODULE_NAME }} from KTest-VN/${{ env.MODULE_NAME }}@${{ env.LATEST_COMMIT }}"
+          git add ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
+          git commit -m "${{ github.actor }} add ${{ env.REPO_TYPE }} ${{ env.REPO_NAME }} from KTest-VN/${{ env.REPO_NAME }}@${{ env.LATEST_COMMIT }}"
       
       - name: Push changes
         run: git push origin main
