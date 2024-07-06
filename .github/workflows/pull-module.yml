@@ -1,5 +1,5 @@
 name: Pull module/submodule
-run-name: ${{ github.actor }} is pulling module
+run-name: ${{ github.actor }} is pulling ${{inputs.repo_type }} ${{inputs.repo_name }}
 
 on:
   workflow_dispatch:
@@ -66,8 +66,8 @@ jobs:
           REMAIN_COMMIT=`git log -n 1 --pretty=format:"%s" ./modules/ktest/calling/main.nf | grep -oP '(?<=@).*' || echo 'null'`
           REMOTE_COMMIT=`git ls-remote ${{ env.REPO_LINK }}| head -n1 | awk '{print $1}' | grep -oE '^.{7}'`
           
-          echo $REMAIN_COMMIT
-          echo $REMOTE_COMMIT
+          echo "REMAIN_COMMIT=$REMAIN_COMMIT"
+          echo "REMOTE_COMMIT=$REMOTE_COMMIT"
 
           if [[ $REMAIN_COMMIT == $REMOTE_COMMIT ]]; then
             echo "NEED_CLONE=0" >> $GITHUB_ENV

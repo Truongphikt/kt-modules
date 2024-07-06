@@ -1,5 +1,5 @@
 name: Update all modules
-run-name: Update all module
+run-name: ${{ github.actor }} Update all module
 
 on:
   schedule:
