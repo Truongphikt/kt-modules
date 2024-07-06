@@ -48,7 +48,7 @@ jobs:
 
       - name: Prepare global variables
         run: |
-          echo "REPO_LINK=git@github.com:KTest-VN/${{inputs.repo_name }}.git" >> $GITHUB_ENV
+          echo "REPO_LINK=git@github.com:KTest-VN/${{inputs.repo_name}}.git" >> $GITHUB_ENV
           echo "REPO_NAME=${{inputs.repo_name }}" >> $GITHUB_ENV
           echo "REPO_TYPE=${{inputs.repo_type }}" >> $GITHUB_ENV
 
@@ -63,10 +63,21 @@ jobs:
       - name: Checking ${{ env.REPO_TYPE }} if exist
         if: ${{ env.REPO_EXIST }}
         run: |
-          REMAIN_COMMIT=`git log -n 1 --pretty=format:"%s" ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/main.nf | sed 's|@(.*)$|\1|g'`
-          rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
+          REMAIN_COMMIT=`git log -n 1 --pretty=format:"%s" ./modules/ktest/calling/main.nf | grep -oP '(?<=@).*' || echo 'null'`
+          REMOTE_COMMIT=`git ls-remote ${{ env.REPO_LINK }}| head -n1 | awk '{print $1}' | grep -oE '^.{7}'`
+          
+          echo $REMAIN_COMMIT
+          echo $REMOTE_COMMIT
+
+          if [[ $REMAIN_COMMIT == $REMOTE_COMMIT ]]; then
+            echo "NEED_CLONE=0" >> $GITHUB_ENV
+          else
+            echo "NEED_CLONE=1" >> $GITHUB_ENV
+            rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
+          fi
 
       - name: Clone the ${{ env.REPO_TYPE }}
+        if: ${{ env.NEED_CLONE }}
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
@@ -74,21 +85,25 @@ jobs:
           git clone ${{ env.REPO_LINK }} ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
       
       - name: Get last commit of ${{ env.REPO_TYPE }}
+        if: ${{ env.NEED_CLONE }}
         run: |
           cd ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
           LATEST_COMMIT=`git log -n 1 origin/main --pretty=format:"%h"`
           echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
 
       - name: Clean git of ${{ env.REPO_TYPE }}
+        if: ${{ env.NEED_CLONE }}
         run: |
           rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/.git/
 
       - name: Commit changes
+        if: ${{ env.NEED_CLONE }}
         run: |
           git reset
           git add ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
           git commit -m "${{ github.actor }} add ${{ env.REPO_TYPE }} ${{ env.REPO_NAME }} from KTest-VN/${{ env.REPO_NAME }}@${{ env.LATEST_COMMIT }}"
       
       - name: Push changes
+        if: ${{ env.NEED_CLONE }}
         run: git push origin main
           

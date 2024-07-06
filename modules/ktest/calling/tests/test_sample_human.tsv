@@ -1,4 +1,0 @@
-key	object	rg_id	dedup.bam	dedup.bai
-null	human	HG00096	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/HG00096_Capture.dedup.bam	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/HG00096_Capture.dedup.bai
-null	human	HG00102	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/HG00102_Capture.dedup.bam	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/HG00102_Capture.dedup.bai
-null	human	NA12878	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/NA12878_Capture.dedup.bam	/home/ktest/share/Working_folder/TRUONGPHI/test_data/test_calling/NA12878_Capture.dedup.bai

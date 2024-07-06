@@ -1,3 +1,0 @@
-rg_id	sample_name	library_id	lane	platform	machine	orient	object	path
-SRR14775139	A01	RANDOM	S1	ILLUMINA	Novaseq	1	pig	/home/ktest/project/trucle/LCWGS-8/LCWGS-18/data_test/SRR14775139_1.fastq.gz
-SRR14775139	A01	RANDOM	S1	ILLUMINA	Novaseq	2	pig	/home/ktest/project/trucle/LCWGS-8/LCWGS-18/data_test/SRR14775139_2.fastq.gz
