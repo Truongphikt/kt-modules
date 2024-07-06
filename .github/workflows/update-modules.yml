@@ -1,40 +1,38 @@
 name: Update all modules
-run-name: Update module
+run-name: Update all module
 
 on:
   schedule:
     - cron: '0 0 28-31 * *'
   workflow_dispatch:
 
-
 jobs:
   list_module:
+    runs-on: ubuntu-20.04
+
+    outputs:
+      MODULE_LIST: ${{ steps.get_modules.outputs.MODULE_LIST }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Add SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        uses: actions/checkout@v4
       
-      - name: Get list all module
+      - name: Get list all modules
+        id: get_modules
         run: |
-          json_list=$(echo `ls ./modules/ktest` | tr -d '\n' | jq -R -s -c 'split(" ")')
-          echo "MODULE_LIST=$json_list" >> $GITHUB_ENV
+          json_list=$(ls ./modules/ktest| sed -z '$ s/\n$//'| jq -R -s -c 'split("\n")')
+          echo "MODULE_LIST=$json_list" | tee -a "$GITHUB_OUTPUT"
 
   update_module:
-    runs-on: ubuntu-20.04
+    needs: list_module
     strategy:
-      matrix:
-        module_name: ${{ fromJson(env.MODULE_LIST) }}
-    steps:
-      - name: Update modules
-        uses: ./.github/workflows/pull-module.yml
-        with:
-          module_name: ${{ matrix.module_name }}
-          repo_type: module
+      matrix: 
+        module_list: ${{ fromJson(needs.list_module.outputs.MODULE_LIST) }}
+    uses: Truongphikt/kt-modules/.github/workflows/pull-module.yml@main
+    with:
+      repo_name: ${{ matrix.module_list }}
+      repo_type: module
+    secrets: inherit
       
+      
+
