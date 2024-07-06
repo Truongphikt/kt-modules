@@ -70,15 +70,15 @@ jobs:
           git fetch
           git clone ${{ env.MODULE_LINK }} ./modules/ktest/${{ env.MODULE_NAME }}
       
-      - name: Clean git of module
-        run: |
-          rm -rf ./modules/ktest/${{ env.MODULE_NAME }}/.git/
-
       - name: Get last commit of module
         run: |
           cd ./modules/ktest/${{ env.MODULE_NAME }}
-          LATEST_COMMIT=`git log -n 1 origin/main --pretty=format:"%H"`
+          LATEST_COMMIT=`git log -n 1 origin/main --pretty=format:"%h"`
           echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
+
+      - name: Clean git of module
+        run: |
+          rm -rf ./modules/ktest/${{ env.MODULE_NAME }}/.git/
 
       - name: Commit changes
         run: |
