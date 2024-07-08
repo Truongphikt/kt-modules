@@ -1,0 +1,2 @@
+key	object	rg_id	dedup.bam	dedup.bai
+null	pig	SRR5336868	/home/ktest2/project/PRS/PRS-62/PRS-199/test_data/subsampled_SRR5336868.bam	/home/ktest2/project/PRS/PRS-62/PRS-199/test_data/subsampled_SRR5336868.bam.bai
