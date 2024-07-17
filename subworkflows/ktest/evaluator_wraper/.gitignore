@@ -1,0 +1,7 @@
+.nextflow*
+logs
+*.swp
+*.log
+run.sh
+custom.config
+split_folder
