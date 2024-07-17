@@ -1,0 +1,19 @@
+{
+    "name": "",
+    "homePage": "",
+    "repos": {
+        "git@github.com:KTest-VN/kt-modules.git": {
+            "modules": {
+                "ktest": {
+                    "sample_preparing": {
+                        "branch": "main",
+                        "git_sha": "cd8ea2953978dd7b353fa275645e7f7c593f2cf9",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
