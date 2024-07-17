@@ -90,7 +90,7 @@ jobs:
       - name: Clone the ${{ env.REPO_TYPE }}
         if: ${{ env.NEED_CLONE == 1 }} 
         run: |
-          git clone ${{ env.REPO_LINK }} ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
+          git clone --recurse-submodules -j8 ${{ env.REPO_LINK }} ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}
       
       - name: Get last commit of ${{ env.REPO_TYPE }}
         if: ${{ env.NEED_CLONE == 1 }} 
@@ -102,7 +102,7 @@ jobs:
       - name: Clean git of ${{ env.REPO_TYPE }}
         if: ${{ env.NEED_CLONE == 1 }} 
         run: |
-          rm -rf ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }}/.git/
+          find ./${{ env.REPO_TYPE }}s/ktest/${{ env.REPO_NAME }} -type d -name ".git" -exec rm -rf {} +
 
       - name: Commit changes
         if: ${{ env.NEED_CLONE == 1 }} 
