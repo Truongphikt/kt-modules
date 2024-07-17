@@ -20,7 +20,7 @@ jobs:
       - name: Get list all modules
         id: get_modules
         run: |
-          json_list=$(ls ./*/ktest| sed -z '$ s/\n$//'| jq -R -s -c 'split("\n")')
+          json_list=$(ls ./*/ktest/* -type d | sed -z '$ s/\n$//'| jq -R -s -c 'split("\n")')
           echo "MODULE_LIST=$json_list" | tee -a "$GITHUB_OUTPUT"
 
   update_module:
